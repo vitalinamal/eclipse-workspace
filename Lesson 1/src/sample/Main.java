@@ -1,0 +1,18 @@
+package sample;
+
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner scanner = new Scanner(System.in);
+		String inputString = scanner.nextLine();
+		
+		
+		System.out.println(inputString);
+		scanner.close();
+
+	}
+
+}
