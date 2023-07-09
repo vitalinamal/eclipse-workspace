@@ -1,12 +1,10 @@
-package sample;
+package homework4;
 
-import java.util.Arrays;
-import java.util.List;
+import homework5.GroupFileStorage;
 
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Student student1 = new Student("Igor", "Kos", Gender.MALE, 1, "prva");
 		Student student2 = new Student("Igor", "Kop", Gender.MALE, 2, "prva");
 		Student student3 = new Student("Igor", "Kor", Gender.MALE, 3, "prva");
@@ -32,18 +30,7 @@ public class Main {
 			group1.addStudent(student9);
 			group1.addStudent(student10);
 
-//			System.out.println(group1);
-//			
-			System.out.println(group1.searchStudentByLastName("Kos"));
-			System.out.println(group1.removeStudentByID(1));
-			group1.addStudent(student1);
-
-//			System.out.println(group1);
-			group1.sortStudentsByLastName();
-			List<Student> listOfStudents = Arrays.asList(group1.getStudents());
-			listOfStudents.forEach(System.out::println);
-			Student studentFromInput = StudentReader.inputStudentData();
-			System.out.println(studentFromInput);
+			GroupFileStorage.saveGroupToCSV(group1);
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

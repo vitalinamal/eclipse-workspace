@@ -1,4 +1,4 @@
-package sample;
+package homework4;
 
 public class Student extends Human {
 
