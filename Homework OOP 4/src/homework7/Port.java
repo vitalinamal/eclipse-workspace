@@ -4,7 +4,7 @@ public class Port {
     private static final int NUM_DOCKS = 2;
     private volatile int docksAvailable = NUM_DOCKS;
 
-    public void unloadCargo(Ship ship) {
+    public void unloadCargo(ShipUnloading ship) {
         System.out.println("Ship " + ship.getId() + " has arrived at the port.");
         synchronized (this) {
             System.out.println("Available docks before: " + docksAvailable);
@@ -22,7 +22,7 @@ public class Port {
         }
 
         System.out.println("Ship " + ship.getId() + " is unloading cargo...");
-        for (int i = 1; i <= Ship.NUM_BOXES; i++) {
+        for (int i = 1; i <= ShipUnloading.NUM_BOXES; i++) {
             try {
                 Thread.sleep(500); // Simulate unloading speed
             } catch (InterruptedException e) {
