@@ -2,72 +2,67 @@ package homework6;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MultiThreadedSumCalculator {
-	private static final int NUM_THREADS = 4;
+public class MultiThreadedSumCalculator implements Runnable {
+	private final int[] array;
+	private final int startIndex;
+	private final int endIndex;
+	private final AtomicLong partialSum;
 
-	public static long calculateSum(int[] array) {
-		int size = array.length;
-		int chunkSize = (size + NUM_THREADS - 1) / NUM_THREADS; 
-
-		SumThread[] threads = new SumThread[NUM_THREADS];
-
-		for (int i = 0; i < NUM_THREADS; i++) {
-			int start = i * chunkSize;
-			int end = Math.min((i + 1) * chunkSize, size);
-			threads[i] = new SumThread(array, start, end);
-			threads[i].start();
-		}
-
-		for (SumThread thread : threads) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		long totalSum = 0;
-		for (SumThread thread : threads) {
-			totalSum += thread.getPartialSum();
-		}
-
-		return totalSum;
+	public MultiThreadedSumCalculator(int[] array, int startIndex, int endIndex, AtomicLong partialSum) {
+		this.array = array;
+		this.startIndex = startIndex;
+		this.endIndex = endIndex;
+		this.partialSum = partialSum;
 	}
 
-	private static class SumThread extends Thread {
-		private int[] array;
-		private int start;
-		private int end;
-		private AtomicLong partialSum = new AtomicLong(0);
+	@Override
+	public void run() {
+		long sum = 0;
+		for (int i = startIndex; i <= endIndex; i++) {
+			sum += array[i];
+		}
+		partialSum.addAndGet(sum);
+	}
 
-		public SumThread(int[] array, int start, int end) {
-			this.array = array;
-			this.start = start;
-			this.end = end;
+	public static long calculateSumWithThreads(int[] array, int numThreads) throws InterruptedException {
+		int arrayLength = array.length;
+		AtomicLong result = new AtomicLong(0);
+		Thread[] threads = new Thread[numThreads];
+
+		int blockSize = arrayLength / numThreads;
+		int extraElements = arrayLength % numThreads;
+		int currentIndex = 0;
+
+		for (int i = 0; i < numThreads; i++) {
+			int blockSizeWithExtra = blockSize + (i < extraElements ? 1 : 0);
+			int endIndex = currentIndex + blockSizeWithExtra - 1;
+			threads[i] = new Thread(new MultiThreadedSumCalculator(array, currentIndex, endIndex, result));
+			threads[i].start();
+			currentIndex = endIndex + 1;
 		}
 
-		public void run() {
-			for (int i = start; i < end; i++) {
-				partialSum.addAndGet(array[i]);
-			}
+		for (int i = 0; i < numThreads; i++) {
+			threads[i].join();
 		}
 
-		public long getPartialSum() {
-			return partialSum.get();
-		}
+		return result.get();
 	}
 
 	public static void main(String[] args) {
-		int arraySize = 100000000; 
-
-		int[] array = new int[arraySize];
-
+		int[] array = new int[100000000];
 		for (int i = 0; i < array.length; i++) {
 			array[i] = i + 1;
 		}
+
+		int numThreads = 4;
 		var start = System.currentTimeMillis();
 		System.out.println("Started with threads at " + start);
-		long sum = calculateSum(array);
+		long sum = 0;
+		try {
+			sum = calculateSumWithThreads(array, numThreads);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		var end = System.currentTimeMillis();
 		System.out.println("Finished with threads at " + end);
 		System.out.println(end - start);
@@ -84,7 +79,6 @@ public class MultiThreadedSumCalculator {
 		end = System.currentTimeMillis();
 		System.out.println("Finished without threads at " + end);
 		System.out.println(end - start);
-
 
 		System.out.println("The sum of the elements in the array is: " + sum2);
 
