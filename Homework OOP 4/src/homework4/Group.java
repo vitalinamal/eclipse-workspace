@@ -2,6 +2,9 @@ package homework4;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class Group {
 
@@ -95,6 +98,17 @@ public class Group {
 		return studentFound;
 	}
 
+	public boolean isThereDuplicateStudentsInsideGroup() {
+		Set<Student> seenStudents = new HashSet<>();
+		for (Student student : this.students) {
+			if (seenStudents.contains(student)) {
+				return true;
+			}
+			seenStudents.add(student);
+		}
+		return false;
+	}
+
 	public void sortStudentsByLastName() {
 		Arrays.sort(students, Comparator.nullsLast(new StudentLastNameComparator()));
 	}
@@ -102,6 +116,27 @@ public class Group {
 	@Override
 	public String toString() {
 		return "Group [groupName=" + groupName + ", students=" + Arrays.toString(students) + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(students);
+		result = prime * result + Objects.hash(groupName);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Group)) {
+			return false;
+		}
+		Group other = (Group) obj;
+		return Objects.equals(groupName, other.groupName) && Arrays.equals(students, other.students);
 	}
 
 }
