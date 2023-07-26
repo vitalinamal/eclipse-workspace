@@ -3,10 +3,13 @@ package homework6;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MultiThreadedSumCalculator implements Runnable {
-	private final int[] array;
-	private final int startIndex;
-	private final int endIndex;
-	private final AtomicLong partialSum;
+	private int[] array;
+	private int startIndex;
+	private int endIndex;
+	private AtomicLong partialSum;
+
+	public MultiThreadedSumCalculator() {
+	}
 
 	public MultiThreadedSumCalculator(int[] array, int startIndex, int endIndex, AtomicLong partialSum) {
 		this.array = array;
@@ -24,7 +27,7 @@ public class MultiThreadedSumCalculator implements Runnable {
 		partialSum.addAndGet(sum);
 	}
 
-	public static long calculateSumWithThreads(int[] array, int numThreads) throws InterruptedException {
+	public long calculateSumWithThreads(int[] array, int numThreads) throws InterruptedException {
 		int arrayLength = array.length;
 		AtomicLong result = new AtomicLong(0);
 		Thread[] threads = new Thread[numThreads];
@@ -48,39 +51,4 @@ public class MultiThreadedSumCalculator implements Runnable {
 		return result.get();
 	}
 
-	public static void main(String[] args) {
-		int[] array = new int[100000000];
-		for (int i = 0; i < array.length; i++) {
-			array[i] = i + 1;
-		}
-
-		int numThreads = 4;
-		var start = System.currentTimeMillis();
-		System.out.println("Started with threads at " + start);
-		long sum = 0;
-		try {
-			sum = calculateSumWithThreads(array, numThreads);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		var end = System.currentTimeMillis();
-		System.out.println("Finished with threads at " + end);
-		System.out.println(end - start);
-
-		System.out.println("The sum of the elements in the array is: " + sum);
-
-		long sum2 = 0;
-		start = System.currentTimeMillis();
-		System.out.println("Started without threads at " + System.currentTimeMillis());
-
-		for (int i : array) {
-			sum2 += i;
-		}
-		end = System.currentTimeMillis();
-		System.out.println("Finished without threads at " + end);
-		System.out.println(end - start);
-
-		System.out.println("The sum of the elements in the array is: " + sum2);
-
-	}
 }
