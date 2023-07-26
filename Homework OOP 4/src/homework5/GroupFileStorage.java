@@ -13,11 +13,21 @@ import java.util.List;
 import homework4.Gender;
 import homework4.Group;
 import homework4.Student;
+import homework8.EnhancedGroup;
 
 public class GroupFileStorage {
 
-    public static void saveGroupToCSV(Group gr) {
-        String fileName = "Homework OOP 4\\src\\files\\" + gr.getGroupName() + ".csv";
+    public static void saveGroupToCSV(Group group) {
+        saveGroupToCSV(group.getGroupName(), Arrays.asList(group.getStudents()));
+    }
+
+    public static void saveGroupToCSV(EnhancedGroup group) {
+        saveGroupToCSV(group.getGroupName(), group.getStudents());
+    }
+
+
+    private static void saveGroupToCSV(String groupName, List<Student> students) {
+        String fileName = "Homework OOP 4\\src\\files\\" + groupName + ".csv";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             // Write the header
@@ -25,7 +35,6 @@ public class GroupFileStorage {
             writer.newLine();
 
             // Write the data for each person
-            List<Student> students = Arrays.asList(gr.getStudents());
             for (Student student : students) {
                 writer.write(student.getId() + ",");
                 writer.write(student.getName() + ",");
