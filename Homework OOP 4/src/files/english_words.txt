@@ -1,0 +1,3 @@
+car plane train bird
+ship apple pear fish
+cat lion tiger dog
